@@ -33,18 +33,10 @@ export const SCIFI_CHARACTER_TABLES = [
     name: "SN Sci-Fi - Alien Traits",
     formula: "1d12",
     results: [
-      [1, "Armored: +1 AC or AR"],
-      [2, "Spiked: d6 dmg on touch"],
-      [3, "Hiding: Adv to Stealth"],
-      [4, "Toxic: Paralyzes foes on atk"],
-      [5, "Anti-Tech Field"],
-      [6, "Very Fast: Always Moves first"],
-      [7, "Winged: Ignores terrain"],
-      [8, "Vicious: Extra Damage (+d6)"],
-      [9, "Telepathic/Telekinetic"],
-      [10, "Multi-Armed: Extra Attacks"],
-      [11, "Shapeshifting: +1 AC/DC"],
-      [12, "Healing: d6 HP self/ally"]
+      [1, "Armored: +1 AC or AR"], [2, "Spiked: d6 dmg on touch"], [3, "Hiding: Adv to Stealth"],
+      [4, "Toxic: Paralyzes foes on atk"], [5, "Anti-Tech Field"], [6, "Very Fast: Always Moves first"],
+      [7, "Winged: Ignores terrain"], [8, "Vicious: Extra Damage (+d6)"], [9, "Telepathic/Telekinetic"],
+      [10, "Multi-Armed: Extra Attacks"], [11, "Shapeshifting: +1 AC/DC"], [12, "Healing: d6 HP self/ally"]
     ]
   },
   {
@@ -52,18 +44,10 @@ export const SCIFI_CHARACTER_TABLES = [
     name: "SN Sci-Fi - Alien Abilities",
     formula: "1d12",
     results: [
-      [1, "Blast: Area of Effect attack"],
-      [2, "Long-Ranged Attacks"],
-      [3, "Massive: Knocks foes over"],
-      [4, "Psionic: +d6 psychic dmg"],
-      [5, "Teleport: To escape/fight"],
-      [6, "Summons or Calls Allies"],
-      [7, "Charge: +d6 dmg after"],
-      [8, "Invisibility: d6 rounds"],
-      [9, "Throws: Objects, foes, etc."],
-      [10, "Bloodsucking: Restores HP"],
-      [11, "Freezing/Burning Breath"],
-      [12, "Snaring: Save or trapped"]
+      [1, "Blast: Area of Effect attack"], [2, "Long-Ranged Attacks"], [3, "Massive: Knocks foes over"],
+      [4, "Psionic: +d6 psychic dmg"], [5, "Teleport: To escape/fight"], [6, "Summons or Calls Allies"],
+      [7, "Charge: +d6 dmg after"], [8, "Invisibility: d6 rounds"], [9, "Throws: Objects, foes, etc."],
+      [10, "Bloodsucking: Restores HP"], [11, "Freezing/Burning Breath"], [12, "Snaring: Save or trapped"]
     ]
   },
   {
@@ -80,8 +64,8 @@ export const SCIFI_CHARACTER_TABLES = [
     name: "SN Sci-Fi - Alien Behavior",
     formula: "1d12",
     results: [
-      [1, "Aggressive"], [2, "Ambush"], [3, "Territorial"], [4, "Pack Tactics"], [5, "Lone Wolf"], [6, "Opportunistic"],
-      [7, "Cowardly"], [8, "Stealthy"], [9, "Protective"], [10, "Frenzied"], [11, "Intelligent"], [12, "Intelligent"]
+      [1, "Aggressive"], [2, "Ambush"], [3, "Territorial"], [4, "Pack"], [5, "Tactics"], [6, "Lone Wolf"],
+      [7, "Opportunistic"], [8, "Cowardly"], [9, "Stealthy"], [10, "Protective"], [11, "Frenzied"], [12, "Intelligent"]
     ]
   },
   {
@@ -143,14 +127,9 @@ export const SCIFI_CHARACTER_TABLES = [
     name: "SN Sci-Fi - Treasure Table",
     formula: "2d6",
     results: [
-      [[2, 3], "Poor | 2d6 Creds"],
-      [[4, 5], "Mediocre | 3d6 Creds"],
-      [[6, 7], "Decent | 1d6x20 Creds"],
-      [[8, 9], "Great! | 3d6x20 Creds"],
-      [10, "1d6 Rare Gems | #x100 Creds"],
-      [11, "Weapons/Gear | 2d6x20 Creds"],
-      [12, "Masterwork +1 | 2d6x100 Creds"],
-      [13, "Xeno Tech | 2d6x500 Creds"]
+      [[2, 3], "Poor | 2d6 Creds"], [[4, 5], "Mediocre | 3d6 Creds"], [[6, 7], "Decent | 1d6x20 Creds"],
+      [[8, 9], "Great! | 3d6x20 Creds"], [10, "1d6 Rare Gems | #x100 Creds"], [11, "Weapons/Gear | 2d6x20 Creds"],
+      [12, "Masterwork +1 | 2d6x100 Creds"], [13, "Xeno Tech | 2d6x500 Creds"]
     ]
   }
 ];
