@@ -3,16 +3,30 @@ import { FANTASY_HEXCRAWL_TABLES } from "./fantasy-hexcrawl-tables.js";
 import { FANTASY_DUNGEON_TABLES } from "./fantasy-dungeon-tables.js";
 import { FANTASY_CHARACTER_TABLES } from "./fantasy-character-tables.js";
 import { FANTASY_ORACLE_TABLES } from "./fantasy-oracle-tables.js";
+import { SCIFI_SPACE_TABLES } from "./scifi-space-tables.js";
+import { SCIFI_SITE_TABLES } from "./scifi-site-tables.js";
+import { SCIFI_CHARACTER_TABLES } from "./scifi-character-tables.js";
+import { SCIFI_ORACLE_TABLES } from "./scifi-oracle-tables.js";
 
 const MODULE_ID = "sn-ultimate-roll-tables";
+const DATA_VERSION = "0.3.0";
+
 const COMMON_FOLDER_NAME = "SN Toolkit - Common";
 const FANTASY_FOLDER_NAME = "SN Toolkit - Fantasy";
+const SCIFI_FOLDER_NAME = "SN Toolkit - Sci-Fi";
 
 const FANTASY_TABLES = [
   ...FANTASY_HEXCRAWL_TABLES,
   ...FANTASY_DUNGEON_TABLES,
   ...FANTASY_CHARACTER_TABLES,
   ...FANTASY_ORACLE_TABLES
+];
+
+const SCIFI_TABLES = [
+  ...SCIFI_SPACE_TABLES,
+  ...SCIFI_SITE_TABLES,
+  ...SCIFI_CHARACTER_TABLES,
+  ...SCIFI_ORACLE_TABLES
 ];
 
 Hooks.once("init", () => {
@@ -31,6 +45,22 @@ Hooks.once("init", () => {
     type: Boolean,
     default: false
   });
+
+  game.settings.register(MODULE_ID, "scifiTablesInstalled", {
+    name: "Sci-Fi tables installed",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: false
+  });
+
+  game.settings.register(MODULE_ID, "installedDataVersion", {
+    name: "Installed table data version",
+    scope: "world",
+    config: false,
+    type: String,
+    default: ""
+  });
 });
 
 Hooks.once("ready", async () => {
@@ -39,15 +69,23 @@ Hooks.once("ready", async () => {
   game.modules.get(MODULE_ID).api = {
     installCommonTables,
     installFantasyTables,
+    installSciFiTables,
     installAllTables
   };
 
-  if (!game.settings.get(MODULE_ID, "commonTablesInstalled")) {
-    await installCommonTables();
-  }
+  // Versioned installation means module updates can add new tables without
+  // overwriting any tables the GM has already edited. Existing names are
+  // skipped; newly introduced names are installed automatically.
+  const installedDataVersion = game.settings.get(MODULE_ID, "installedDataVersion");
+  if (installedDataVersion !== DATA_VERSION) {
+    const result = await installAllTables({ notify: false });
+    await game.settings.set(MODULE_ID, "installedDataVersion", DATA_VERSION);
 
-  if (!game.settings.get(MODULE_ID, "fantasyTablesInstalled")) {
-    await installFantasyTables();
+    const created = result.common.created + result.fantasy.created + result.scifi.created;
+    const skipped = result.common.skipped + result.fantasy.skipped + result.scifi.skipped;
+    ui.notifications.info(
+      `SN Ultimate Roll Tables ${DATA_VERSION}: ${created} table${created === 1 ? "" : "s"} added, ${skipped} already present.`
+    );
   }
 });
 
@@ -116,26 +154,57 @@ async function installTableSet(definitions, folderName) {
   return { created, skipped };
 }
 
-async function installCommonTables() {
+async function installCommonTables({ notify = true } = {}) {
   const result = await installTableSet(COMMON_TABLES, COMMON_FOLDER_NAME);
   await game.settings.set(MODULE_ID, "commonTablesInstalled", true);
-  ui.notifications.info(
-    `SN Ultimate Roll Tables: ${result.created} Common table${result.created === 1 ? "" : "s"} created, ${result.skipped} already present.`
-  );
+
+  if (notify) {
+    ui.notifications.info(
+      `SN Ultimate Roll Tables: ${result.created} Common table${result.created === 1 ? "" : "s"} created, ${result.skipped} already present.`
+    );
+  }
+
   return result;
 }
 
-async function installFantasyTables() {
+async function installFantasyTables({ notify = true } = {}) {
   const result = await installTableSet(FANTASY_TABLES, FANTASY_FOLDER_NAME);
   await game.settings.set(MODULE_ID, "fantasyTablesInstalled", true);
-  ui.notifications.info(
-    `SN Ultimate Roll Tables: ${result.created} Fantasy table${result.created === 1 ? "" : "s"} created, ${result.skipped} already present.`
-  );
+
+  if (notify) {
+    ui.notifications.info(
+      `SN Ultimate Roll Tables: ${result.created} Fantasy table${result.created === 1 ? "" : "s"} created, ${result.skipped} already present.`
+    );
+  }
+
   return result;
 }
 
-async function installAllTables() {
-  const common = await installCommonTables();
-  const fantasy = await installFantasyTables();
-  return { common, fantasy };
+async function installSciFiTables({ notify = true } = {}) {
+  const result = await installTableSet(SCIFI_TABLES, SCIFI_FOLDER_NAME);
+  await game.settings.set(MODULE_ID, "scifiTablesInstalled", true);
+
+  if (notify) {
+    ui.notifications.info(
+      `SN Ultimate Roll Tables: ${result.created} Sci-Fi table${result.created === 1 ? "" : "s"} created, ${result.skipped} already present.`
+    );
+  }
+
+  return result;
+}
+
+async function installAllTables({ notify = true } = {}) {
+  const common = await installCommonTables({ notify: false });
+  const fantasy = await installFantasyTables({ notify: false });
+  const scifi = await installSciFiTables({ notify: false });
+
+  if (notify) {
+    const created = common.created + fantasy.created + scifi.created;
+    const skipped = common.skipped + fantasy.skipped + scifi.skipped;
+    ui.notifications.info(
+      `SN Ultimate Roll Tables: ${created} table${created === 1 ? "" : "s"} created, ${skipped} already present.`
+    );
+  }
+
+  return { common, fantasy, scifi };
 }
