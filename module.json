@@ -3,7 +3,7 @@
   "type": "module",
   "title": "SN Ultimate Roll Tables",
   "description": "System-agnostic Foundry VTT RollTables and procedural generators adapted from SilverNightingale's Ultimate One Page RPG Toolkit 2.1 and Ultimate One-Page Solo RPG Toolkit: SCI-FI EDITION.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "authors": [
     {
       "name": "e17o4",
