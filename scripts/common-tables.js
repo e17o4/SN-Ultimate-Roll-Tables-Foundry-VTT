@@ -121,5 +121,41 @@ export const COMMON_TABLES = [
       [5, "Scavenging"], [6, "Fleeing"], [7, "Nesting"], [8, "Roaming"],
       [9, "Territorial"], [10, "Guarding"], [11, "Battling"], [12, "Feeding"]
     ]
+  },
+  {
+    key: "name-prefix",
+    name: "SN Common - Name Prefix",
+    formula: "1d10",
+    results: [
+      [1, "Kor"], [2, "Val"], [3, "Ga"], [4, "Ter"], [5, "Nel"],
+      [6, "Ru"], [7, "Ira"], [8, "Par"], [9, "Ana"], [10, "La"]
+    ]
+  },
+  {
+    key: "name-middle-a",
+    name: "SN Common - Name Middle A",
+    formula: "1d10",
+    results: [
+      [1, "an"], [2, "al"], [3, "el"], [4, "in"], [5, "un"],
+      [6, "mar"], [7, "jen"], [8, "zar"], [9, "sen"], [10, "osh"]
+    ]
+  },
+  {
+    key: "name-middle-b",
+    name: "SN Common - Name Middle B",
+    formula: "1d10",
+    results: [
+      [1, "u"], [2, "ar"], [3, "a"], [4, "nu"], [5, "den"],
+      [6, "qu"], [7, "zi"], [8, "v"], [9, "c"], [10, "tu"]
+    ]
+  },
+  {
+    key: "name-suffix",
+    name: "SN Common - Name Suffix",
+    formula: "1d10",
+    results: [
+      [1, "int"], [2, "ent"], [3, "ian"], [4, "mer"], [5, "org"],
+      [6, "aus"], [7, "mas"], [8, "ius"], [9, "ker"], [10, "isk"]
+    ]
   }
 ];
