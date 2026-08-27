@@ -1,0 +1,128 @@
+name: Validate Foundry Module
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate module.json
+        run: node -e "JSON.parse(require('fs').readFileSync('module.json', 'utf8')); console.log('module.json: valid JSON')"
+
+      - name: Check JavaScript syntax
+        run: |
+          set -e
+          for file in scripts/*.js; do
+            echo "Checking $file"
+            node --check "$file"
+          done
+
+      - name: Verify manifest entry points exist
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const manifest = JSON.parse(fs.readFileSync('module.json', 'utf8'));
+          const paths = [
+            ...(manifest.esmodules ?? []),
+            ...(manifest.scripts ?? []),
+            ...(manifest.styles ?? [])
+          ];
+          let failed = false;
+          for (const p of paths) {
+            if (!fs.existsSync(p)) {
+              console.error(`Missing manifest file: ${p}`);
+              failed = true;
+            } else {
+              console.log(`Found: ${p}`);
+            }
+          }
+          if (failed) process.exit(1);
+          NODE
+
+      - name: Check table definitions for duplicate names and keys
+        run: |
+          node --input-type=module <<'NODE'
+          import { COMMON_TABLES } from './scripts/common-tables.js';
+          import { FANTASY_HEXCRAWL_TABLES } from './scripts/fantasy-hexcrawl-tables.js';
+          import { FANTASY_DUNGEON_TABLES } from './scripts/fantasy-dungeon-tables.js';
+          import { FANTASY_CHARACTER_TABLES } from './scripts/fantasy-character-tables.js';
+          import { FANTASY_ORACLE_TABLES } from './scripts/fantasy-oracle-tables.js';
+          import { SCIFI_SPACE_TABLES } from './scripts/scifi-space-tables.js';
+          import { SCIFI_SITE_TABLES } from './scripts/scifi-site-tables.js';
+          import { SCIFI_CHARACTER_TABLES } from './scripts/scifi-character-tables.js';
+          import { SCIFI_ORACLE_TABLES } from './scripts/scifi-oracle-tables.js';
+
+          const groups = {
+            Common: COMMON_TABLES,
+            Fantasy: [
+              ...FANTASY_HEXCRAWL_TABLES,
+              ...FANTASY_DUNGEON_TABLES,
+              ...FANTASY_CHARACTER_TABLES,
+              ...FANTASY_ORACLE_TABLES
+            ],
+            'Sci-Fi': [
+              ...SCIFI_SPACE_TABLES,
+              ...SCIFI_SITE_TABLES,
+              ...SCIFI_CHARACTER_TABLES,
+              ...SCIFI_ORACLE_TABLES
+            ]
+          };
+
+          let failed = false;
+          for (const [groupName, tables] of Object.entries(groups)) {
+            const names = new Set();
+            const keys = new Set();
+            for (const table of tables) {
+              if (!table.key || !table.name || !table.formula || !Array.isArray(table.results)) {
+                console.error(`${groupName}: invalid definition`, table);
+                failed = true;
+                continue;
+              }
+              if (names.has(table.name)) {
+                console.error(`${groupName}: duplicate table name: ${table.name}`);
+                failed = true;
+              }
+              if (keys.has(table.key)) {
+                console.error(`${groupName}: duplicate table key: ${table.key}`);
+                failed = true;
+              }
+              names.add(table.name);
+              keys.add(table.key);
+
+              for (const result of table.results) {
+                if (!Array.isArray(result) || result.length !== 2) {
+                  console.error(`${table.name}: malformed result`, result);
+                  failed = true;
+                  continue;
+                }
+                const [range, text] = result;
+                const normalized = Array.isArray(range) ? range : [range, range];
+                if (
+                  normalized.length !== 2 ||
+                  !Number.isFinite(normalized[0]) ||
+                  !Number.isFinite(normalized[1]) ||
+                  normalized[0] > normalized[1] ||
+                  typeof text !== 'string'
+                ) {
+                  console.error(`${table.name}: invalid result`, result);
+                  failed = true;
+                }
+              }
+            }
+            console.log(`${groupName}: ${tables.length} table definitions checked`);
+          }
+
+          if (failed) process.exit(1);
+          NODE
